@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 np.random.seed(1234)
-RES = 100
+RES = 200
 
 MIN_X = -5
 MAX_X = 5
@@ -11,12 +11,15 @@ MAX_Y = 3
 MAX_VEL = 0.01
 MIN_VEL = -0.01
 
-MAX_ITERATIONS = 50
+MAX_ITERATIONS = 100
 
 
 def random_contour(x, y):
-    # return np.cos(x) * np.sin(y)
-    return np.sqrt(x ** 2 + y ** 2)
+    return x ** 2 + y ** 2  # Sphere
+    # return 1 + (x ** 2 / 4000) + (y ** 2 / 4000) - np.cos(x / np.sqrt(2)) - np.cos(y / np.sqrt(2))  # Gricwank
+    # return (x ** 2 + y - 11) ** 2 + (x + y ** 2 - 7) ** 2  # Himmelblau
+    # return -20 * np.exp(-0.2 * np.sqrt(0.5 * (x ** 2 + y ** 2))) - np.exp(0.5 * np.cos(2 * np.pi * x) + np.cos(2 * np.pi * y)) + np.exp(1) + 20   # Ackley
+    # return 20 + x ** 2 - 10 * np.cos(2 * np.pi * x) - 10 * np.cos(2 * np.pi * y)  # Rastrigin
 
 
 def random_meshgrid():
@@ -28,7 +31,7 @@ def random_meshgrid():
 
 
 class Swarm:
-    def __init__(self, X, Y, Z, N, omega=0.1, phi_p=0.1, phi_g=0.1):
+    def __init__(self, X, Y, Z, N, omega=0.05, phi_p=0.05, phi_g=0.5):
         self.X = X
         self.Y = Y
         self.Z = Z
@@ -44,7 +47,7 @@ class Swarm:
             initial_pos_x = np.random.uniform(MIN_X, MAX_X)
             initial_pos_y = np.random.uniform(MIN_Y, MAX_Y)
             initial_cost = self.calculate_cost(initial_pos_x, initial_pos_y, self.Z)
-            new_particle = self.Particle(initial_pos_x, initial_pos_y, initial_cost, self)
+            new_particle = Particle(initial_pos_x, initial_pos_y, initial_cost, self)
             self.update_best_position(new_particle)
             self.particles.append(new_particle)
         self.update_total_cost()
@@ -78,7 +81,7 @@ class Swarm:
         plt.figure(figsize=(8, 5))
         plt.ion()
         cs = plt.contour(X, Y, Z)
-        plt.clabel(cs, inline=1, fontsize=8)
+        plt.clabel(cs, inline=1, fontsize=6)
         plt.imshow(Z, extent=[MIN_X, MAX_X, MIN_Y, MAX_Y], origin="lower", alpha=0.3)
         plt.colorbar(shrink=0.75)
         self.plot()
@@ -116,27 +119,28 @@ class Swarm:
         for i in range(self.N):
             self.particles[i].plot()
 
-    class Particle:
-        def __init__(self, x, y, initial_cost, swarm):
-            self.pos_x = x
-            self.pos_y = y
-            self.cost = initial_cost
-            self.best_pos_x = self.pos_x
-            self.best_pos_y = self.pos_y
-            if swarm.best_cost:
-                if self.cost < swarm.best_cost:
-                    swarm.best_position = (self.best_pos_x, self.best_pos_y)
-                    swarm.best_cost = self.cost
-            self.vel_x = np.random.uniform(MIN_VEL, MAX_VEL) 
-            self.vel_y = np.random.uniform(MIN_VEL, MAX_VEL)
 
-        def __repr__(self):
-            return (f"Particle(({self.pos_x:.2f}, {self.pos_y:.2f}), ({self.vel_x:.2f}, {self.vel_y:.2f}),"
-                    f"({self.best_pos_x:.2f}, {self.best_pos_y:.2f}), {self.cost:.2f})")
+class Particle:
+    def __init__(self, x, y, initial_cost, swarm):
+        self.pos_x = x
+        self.pos_y = y
+        self.cost = initial_cost
+        self.best_pos_x = self.pos_x
+        self.best_pos_y = self.pos_y
+        if swarm.best_cost:
+            if self.cost < swarm.best_cost:
+                swarm.best_position = (self.best_pos_x, self.best_pos_y)
+                swarm.best_cost = self.cost
+        self.vel_x = np.random.uniform(MIN_VEL, MAX_VEL) 
+        self.vel_y = np.random.uniform(MIN_VEL, MAX_VEL)
 
-        def plot(self):
-            plt.plot(self.pos_x, self.pos_y, 'r*')
-            plt.arrow(self.pos_x, self.pos_y, self.vel_x, self.vel_y, width=0.02, color='r')
+    def __repr__(self):
+        return (f"Particle(({self.pos_x:.2f}, {self.pos_y:.2f}), ({self.vel_x:.2f}, {self.vel_y:.2f}),"
+                f"({self.best_pos_x:.2f}, {self.best_pos_y:.2f}), {self.cost:.2f})")
+
+    def plot(self):
+        plt.plot(self.pos_x, self.pos_y, 'r*')
+        plt.arrow(self.pos_x, self.pos_y, self.vel_x, self.vel_y, width=0.02, color='r')
 
 
 if __name__ == "__main__":
