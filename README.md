@@ -1,5 +1,5 @@
 # Particle Swarm Optimization
-Find global minimum in landscape using particle swarm optimization (PSO):
+Implementation of the particle swarm optimization (PSO) algorithm proposed in [_Particle Swarm Optimization_](https://ieeexplore.ieee.org/document/488968) to find the global minimum in a landscape.
 
 > _"PSO solves a problem by having a population of candidates of solutions, called particles, and moving these particles around in the search-space according to the particle's velocity and velocity"_ — From [Wikipedia](https://en.wikipedia.org/wiki/Particle_swarm_optimization)
 
