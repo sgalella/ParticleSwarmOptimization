@@ -24,5 +24,5 @@ pip install -r requirements.txt
 Run the algorithm from the command line with:
 
 ```python
-python particle_swarm_optimization/run.py
+python particle_swarm_optimization.py
 ```
