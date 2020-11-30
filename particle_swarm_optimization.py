@@ -138,9 +138,9 @@ class SwarmOptimizationAlgorithm:
         """ Runs the swarm optimization algorithm """
         plt.figure(figsize=(8, 5))
         plt.ion()
-        cs = plt.contour(X, Y, Z)
+        cs = plt.contour(self.X, self.Y, self.Z)
         plt.clabel(cs, inline=1, fontsize=6)
-        plt.imshow(Z, extent=[MIN_X, MAX_X, MIN_Y, MAX_Y], origin="lower", alpha=0.3)
+        plt.imshow(self.Z, extent=[MIN_X, MAX_X, MIN_Y, MAX_Y], origin="lower", alpha=0.3)
         plt.colorbar(shrink=0.75)
         self.plot()
         plt.title(f"Total cost: {self.total_cost}")
@@ -163,9 +163,9 @@ class SwarmOptimizationAlgorithm:
                         self.best_position = (particle.best_pos_x, particle.best_pos_y)
             self.update_total_cost()
             plt.cla()
-            cs = plt.contour(X, Y, Z, 10)
+            cs = plt.contour(self.X, self.Y, self.Z, 10)
             plt.clabel(cs, inline=1, fontsize=8)
-            plt.imshow(Z, extent=[MIN_X, MAX_X, MIN_Y, MAX_Y], origin="lower", alpha=0.3)
+            plt.imshow(self.Z, extent=[MIN_X, MAX_X, MIN_Y, MAX_Y], origin="lower", alpha=0.3)
             self.plot()
             plt.title(f"Total cost: {self.total_cost:.2f}")
             plt.draw()
@@ -214,7 +214,11 @@ class Particle:
         plt.arrow(self.pos_x, self.pos_y, self.vel_x, self.vel_y, width=0.02, color='r')
 
 
-if __name__ == "__main__":
+def main():
     X, Y, Z = generate_landscape()
     swarm = SwarmOptimizationAlgorithm(X, Y, Z, 30)
     swarm.run()
+
+
+if __name__ == "__main__":
+    main()
