@@ -148,44 +148,30 @@ class SwarmOptimizationAlgorithm:
                 self.best_position = (particle.pos_x, particle.pos_y)
                 self.best_cost = particle.cost
 
-    def run(self):
+    def update(self):
         """ Runs the swarm optimization algorithm """
-        plt.figure(figsize=(8, 5))
-        plt.ion()
-        plot_landscape(self.X, self.Y, self.Z)
-        plt.colorbar(shrink=0.75)
-        self.plot()
-        for _ in range(MAX_ITERATIONS):
-            for particle in self.particles:
-                r_px, r_py = np.random.random((2, ))
-                r_gx, r_gy = np.random.random((2, ))
-                particle.vel_x = self.omega * particle.vel_x + self.phi_p * r_px * (particle.best_pos_x - particle.pos_x) \
-                                                             + self.phi_g * r_gx * (self.best_position[0] - particle.pos_x)
-                particle.vel_y = self.omega * particle.vel_y + self.phi_p * r_py * (particle.best_pos_y - particle.pos_y) \
-                                                             + self.phi_g * r_gy * (self.best_position[1] - particle.pos_y)
-                particle.pos_x += particle.vel_x
-                particle.pos_y += particle.vel_y
-                particle.cost = self.calculate_cost(particle.pos_x, particle.pos_y, self.Z)
-                cost_best_pos = self.calculate_cost(particle.best_pos_x, particle.best_pos_y, self.Z)
-                if particle.cost < cost_best_pos:
-                    particle.best_pos_x = particle.pos_x
-                    particle.best_pos_y = particle.pos_y
-                    if particle.cost < self.best_cost:
-                        self.best_position = (particle.best_pos_x, particle.best_pos_y)
-            self.update_total_cost()
-            plt.cla()
-            plot_landscape(self.X, self.Y, self.Z)
-            self.plot()
-            plt.title(f"Total cost: {self.total_cost:.2f}")
-            plt.draw()
-            plt.pause(0.1)
-        plt.ioff()
-        plt.show()
+        for particle in self.particles:
+            r_px, r_py = np.random.random((2, ))
+            r_gx, r_gy = np.random.random((2, ))
+            particle.vel_x = self.omega * particle.vel_x + self.phi_p * r_px * (particle.best_pos_x - particle.pos_x) \
+                                                         + self.phi_g * r_gx * (self.best_position[0] - particle.pos_x)
+            particle.vel_y = self.omega * particle.vel_y + self.phi_p * r_py * (particle.best_pos_y - particle.pos_y) \
+                                                         + self.phi_g * r_gy * (self.best_position[1] - particle.pos_y)
+            particle.pos_x += particle.vel_x
+            particle.pos_y += particle.vel_y
+            particle.cost = self.calculate_cost(particle.pos_x, particle.pos_y, self.Z)
+            cost_best_pos = self.calculate_cost(particle.best_pos_x, particle.best_pos_y, self.Z)
+            if particle.cost < cost_best_pos:
+                particle.best_pos_x = particle.pos_x
+                particle.best_pos_y = particle.pos_y
+                if particle.cost < self.best_cost:
+                    self.best_position = (particle.best_pos_x, particle.best_pos_y)
 
     def plot(self):
         """ Plots the swarm in the landscape """
         for i in range(self.N):
             self.particles[i].plot()
+        plt.title(f"Total cost: {self.total_cost:.2f}")
 
 
 class Particle:
@@ -226,7 +212,22 @@ class Particle:
 def main():
     X, Y, Z = generate_landscape()
     swarm = SwarmOptimizationAlgorithm(X, Y, Z, 30)
-    swarm.run()
+    swarm.update()
+    plt.figure(figsize=(8, 5))
+    plt.ion()
+    plot_landscape(X, Y, Z)
+    plt.colorbar(shrink=0.75)
+    swarm.plot()
+    for _ in range(MAX_ITERATIONS):
+        swarm.update()
+        swarm.update_total_cost()
+        plt.cla()
+        plot_landscape(X, Y, Z)
+        swarm.plot()
+        plt.draw()
+        plt.pause(0.1)
+    plt.ioff()
+    plt.show()
 
 
 if __name__ == "__main__":
