@@ -17,6 +17,18 @@ To install the dependencies, run the following command:
 pip install -r requirements.txt
 ```
 
+If using Conda, you can also create an environment with the requirements:
+
+```bash
+conda env create -f environment.yml
+```
+
+By default the environment name is `particle-swarm`. To activate it run:
+
+```bash
+conda activate particle-swarm
+```
+
 
 
 ## Usage
